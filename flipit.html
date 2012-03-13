@@ -3,45 +3,63 @@
 <head>
 <title>Flip it!!</title>
 <style>
-			.slot{
-				width:100px;
-				height:100px;
-				float:left;
-				margin:5px;
-				-webkit-transition-property:background-color, transform;
-				-webkit-transition-duration:1000ms;
-				-webkit-border-radius:5px;
-				-moz-transition-property:background-color, transform;
-				-moz-transition-duration:1000ms;
-				-moz-border-radius:5px;
-			}
-			.normal{
-				background-color:red;
-				-webkit-transform:rotateY(0deg);
-				-moz-transform:translate(0px) rotate(0deg);
-			}
-			.flipped{
-				background-color:blue;
-				-webkit-transform:rotateY(180deg);
-				-moz-transform:translate(0px) rotate(180deg);
-			}
+  .container{
+    width:70%;
+    text-align:center;
+    margin: 50px auto;
+  }
+  h1{
+    font-size:60px;
+  }
+  h2{
+    font-size:40px;
+  }
+  .panel{
+    display:inline-block;
+  }
+  .slot{
+    width:100px;
+    height:100px;
+    float:left;
+    margin:5px;
+    -webkit-transition-property:background-color, transform;
+    -webkit-transition-duration:1000ms;
+    -webkit-border-radius:5px;
+    -moz-transition-property:background-color, transform;
+    -moz-transition-duration:1000ms;
+    -moz-border-radius:5px;
+  }
+  .normal{
+    background-color:red;
+    -webkit-transform:rotateY(0deg);
+    -moz-transform:translate(0px) rotate(0deg);
+  }
+  .flipped{
+    background-color:blue;
+    -webkit-transform:rotateY(180deg);
+    -moz-transform:translate(0px) rotate(180deg);
+  }
 
-			.empty{
-				width:100px;
-				height:100px;
-				float:left;
-				margin:5px;
-				//border:1px black solid;
-				background-color: white;
-			}
-			.clearfix:after {
-				content: ".";
-				display: block;
-				clear: both;
-				visibility: hidden;
-				height: 0;
-			}
-			.clear{clear:both;}
+  .empty{
+    width:100px;
+    height:100px;
+    float:left;
+    margin:5px;
+    //border:1px black solid;
+    background-color: white;
+  }
+  .clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    height: 0;
+  }
+  .clear{clear:both;}
+  .reset{
+    padding:5px;
+    font-size:22px;
+  }
 </style>
 		<script type="text/javascript"
 						src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
@@ -163,31 +181,16 @@ var Controller = {
 		</script>
 </head>
 <body>
-<div id="wrapper">
-	<div id="panel" class="panel"></div>
+<div class="container">
+  <h1>Flit It!!</h1>
+  <div id="panel" class="panel"></div>
+  <div>
+    <h2>Stage : <span id="stage">1</span></h2>
+    <h2 id="stat">Step : <span id="step">0</span></h2> <button id="reset" class="reset">Reset</button>
+    <p><b>How to play:</b> change all color to blue by click on the block!</p>
+    <p>please use the chrome or safari browser to play this game</p>
+    <p>flip it v0.05 , arthor:(<a href="http://twitter.com/Jimchaos">@JimChaos</a>)</p>
+  </div>
 <div>
-<div>
-	<h1 id="stat">Step : <span id="step">0</span></h1> <button id="reset">Reset</button>
-	<h2>Stage : <span id="stage">1</span></h2>
-	<p><b>How to play:</b> change all color to blue by click on the block!</p>
-	<p>please use the chrome or safari browser to play this game</p>
-	<p>flip it v0.04 , arthor:(<a href="http://twitter.com/Jimchaos">@JimChaos</a>)</p>
-</div>
 </body>
 </html>
-<!-- 
-todo:
-
-algorithm for solving stage
-save every stage state and connect them, find the shortest solution
-def tryPaths:
-if maxPath: return
-for slot in stage:
-	click slot
-	if result exist, return
-	save result in map
-	if path is shortest, save path in map
-	success if all blue
-	tryPaths in result
-
--->
