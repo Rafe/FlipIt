@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Flip it!!</title>
+<style>
+			.slot{
+				width:100px;
+				height:100px;
+				float:left;
+				margin:5px;
+				-webkit-transition-property:background-color, transform;
+				-webkit-transition-duration:1000ms;
+				-webkit-border-radius:5px;
+				-moz-transition-property:background-color, transform;
+				-moz-transition-duration:1000ms;
+				-moz-border-radius:5px;
+			}
+			.normal{
+				background-color:red;
+				-webkit-transform:rotateY(0deg);
+				-moz-transform:translate(0px) rotate(0deg);
+			}
+			.flipped{
+				background-color:blue;
+				-webkit-transform:rotateY(180deg);
+				-moz-transform:translate(0px) rotate(180deg);
+			}
+
+			.empty{
+				width:100px;
+				height:100px;
+				float:left;
+				margin:5px;
+				//border:1px black solid;
+				background-color: white;
+			}
+			.clearfix:after {
+				content: ".";
+				display: block;
+				clear: both;
+				visibility: hidden;
+				height: 0;
+			}
+			.clear{clear:both;}
+</style>
+		<script type="text/javascript"
+						src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+var flip = function(e){
+	var elem = $(e);
+	if(elem.hasClass("normal")){
+		elem.removeClass("normal").addClass("flipped");
+	}else if(elem.hasClass("flipped")){
+		elem.removeClass("flipped").addClass("normal");
+	}
+}
+
+var Model = {
+	stage1 :[[0,1,0],[3],[0,1,0]],
+	stage2 :[[3],[1,0,1],[3]],
+	stage3 :[[0,2,0],[4],[0,2,0]],
+	stage4 :[[3],[4]],
+	stage5 :[[0,2],[1,0,1],[3]],
+	stage6 :[[0,1,0,0],[4],[1,0,1,0]],
+	stage7 :[[4],[0,2,0],[4],[0,2,0]],
+	stage8 :[[1,0,0,1],[4],[1,0,0,1]],
+	stage9 :[[0,2,0],[4],[4],[0,2,0]],
+	stage10 :[[4],[4],[4],[4]]
+}
+
+var Controller = {
+	currentStage:1,
+	steps:0,
+	model:{},
+	panel:"",
+	init:function(panel,model,stage){
+		this.model = model;
+		this.stage = $(panel);
+		this.currentStage = stage || 1
+		this.buildStage()
+		this.stage.children(".slot").click(Controller.mainLoop);
+	},
+	buildStage:function(){
+		var stage = this.stage,
+				model = this.model["stage"+this.currentStage++],
+				col_block = [];
+		if(model === undefined){
+			return false;
+		}
+		for(var actrow=0,row = 0 ; row < model.length ; row++,actrow++){
+			for(var col = 0 ,i = 0; i<model[row].length; i++){
+				if(model[row][i] > 0){
+					var slotNumber = model[row][i];
+					while(slotNumber){
+						//console.log(stage);
+						var actcol = col + (col_block[col] || 0);
+						stage.append("<div class='slot row"+actrow+" col"+actcol+" normal'>");
+						col++;
+						slotNumber--;
+					}
+				}else{
+					stage.append("<div class='empty'>");
+					if(col_block[col] == undefined){
+						col_block[col] = 0;
+					}
+					col_block[col] += 100;
+					col++;
+					actrow++;
+				}
+			}
+			stage.append("<div class='clear'>");
+		}			 
+		return true;
+	},
+	nextStage:function(){
+			var stage = this.currentStage - 1;
+			alert("you cleared stage "+stage+" !!" );
+			this.stage.empty();
+			if(this.model["stage"+(this.currentStage)] === undefined){
+				this.win();
+				return;
+			}
+			$("#stage").text(++stage);
+			this.buildStage();
+			this.steps = 0;
+			$("#step").text(this.steps);
+			$('.slot').click(this.mainLoop);
+		},
+		mainLoop:function(){
+			var cls = $(this).attr("class").split(" ");
+			$('.'+ cls[1]+',.'+cls[2] ).each(
+				function(){
+					flip(this);
+				}	
+			);
+			
+			$("#step").text(++Controller.steps); 
+			if(Controller.isWinning()) {
+				Controller.steps = 0;
+				setTimeout(function(){Controller.nextStage()},1000);
+			}
+	},
+	isWinning:function(){
+		return this.stage.children(".normal").length > 0 ? false:true;
+	},
+	reset:function(){
+		this.stage.children(".flipped").each(function(){
+			$(this).removeClass("flipped").addClass("normal");
+		});
+	},
+	win:function(){
+		alert("Congradualtion!! You've cleared this game!!");
+	}
+
+}
+		$(function(){
+				Controller.init("#panel",Model);
+				$("#reset").click(function(){ 
+					Controller.reset();
+				});
+		});
+		</script>
+</head>
+<body>
+<div id="wrapper">
+	<div id="panel" class="panel"></div>
+<div>
+<div>
+	<h1 id="stat">Step : <span id="step">0</span></h1> <button id="reset">Reset</button>
+	<h2>Stage : <span id="stage">1</span></h2>
+	<p><b>How to play:</b> change all color to blue by click on the block!</p>
+	<p>please use the chrome or safari browser to play this game</p>
+	<p>flip it v0.04 , arthor:(<a href="http://twitter.com/Jimchaos">@JimChaos</a>)</p>
+</div>
+</body>
+</html>
+<!-- 
+todo:
+
+algorithm for solving stage
+save every stage state and connect them, find the shortest solution
+def tryPaths:
+if maxPath: return
+for slot in stage:
+	click slot
+	if result exist, return
+	save result in map
+	if path is shortest, save path in map
+	success if all blue
+	tryPaths in result
+
+-->
